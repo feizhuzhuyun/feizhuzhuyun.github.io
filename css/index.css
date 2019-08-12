@@ -1,0 +1,201 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.clearfix::after,
+.clearfix::before {
+  display: block;
+  content: '';
+}
+.clearfix::after {
+  clear: both;
+}
+i {
+  font-style: normal;
+}
+body,
+html {
+  height: 100%;
+  width: 100%;
+}
+.login {
+  text-align: center;
+  box-sizing: border-box;
+  padding: 20px;
+  position: absolute;
+  width: 200px;
+  height: 240px;
+  border-radius: 10px;
+  background-color: #960f0f;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.login input {
+  width: 100%;
+  height: 20px;
+  margin: 20px 0px;
+  border: 1px;
+  border-radius: 5px;
+  outline: none;
+}
+.login input:nth-child(3) {
+  width: 80px;
+}
+.login span {
+  display: none;
+  position: absolute;
+  right: -110px;
+  background-color: #f5cbb3;
+  border-radius: 20px;
+  bottom: 10px;
+}
+.container {
+  display: none;
+  width: 1200px;
+  margin: 0 auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.header {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  background-color: red;
+}
+.header img {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: aliceblue;
+  margin-right: 30px;
+}
+.header span {
+  float: right;
+  color: white;
+  line-height: 60px;
+  margin-right: 30px;
+}
+.header > div {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 30px;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.header > div:hover {
+  box-shadow: 1px 2px 10px white;
+}
+.header > div i {
+  text-align: center;
+  font-size: 28px;
+  cursor: pointer;
+  float: right;
+  width: 30px;
+  height: 30px;
+  border-radius: 0px 15px 15px 0px;
+  background-color: white;
+}
+.header > div #search {
+  float: left;
+  width: 270px;
+  height: 30px;
+  border: none;
+  outline: none;
+  text-indent: 1em;
+  font-size: 24px;
+}
+.list {
+  float: left;
+  width: 200px;
+  background-color: cornsilk;
+  height: 540px;
+  overflow: auto;
+}
+.list .title {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 25px;
+}
+.list li {
+  list-style: none;
+  cursor: pointer;
+  border-bottom: 1px solid #555;
+  margin: 20px ;
+}
+.list li.active {
+  color: red;
+}
+.main {
+  float: right;
+  background-color: black;
+  height: 540px;
+  width: 1000px;
+}
+.main .playAudio {
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(90deg, red, #df8686, #df8686, red);
+}
+.main .playAudio .controlMune {
+  float: left;
+  margin-left: 50px;
+  line-height: 60px;
+}
+.main .playAudio .controlMune i {
+  text-align: center;
+  font-size: 26px;
+  cursor: pointer;
+  margin-left: 20px;
+}
+.main .playAudio .controlMune i:nth-child(2) {
+  display: inline-block;
+  font-size: 34px;
+  width: 34px;
+}
+.main .playAudio .processLine {
+  position: relative;
+  float: right;
+  margin-right: 100px;
+  margin-top: 25px;
+  width: 500px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: wheat;
+}
+.main .playAudio .processLine i {
+  top: -3px;
+  left: 0px;
+  position: absolute;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: white;
+  cursor: pointer;
+}
+.main .playAudio .processLine span {
+  position: absolute;
+  top: -5px;
+}
+.main .playAudio .processLine span:nth-child(1) {
+  left: -45px;
+}
+.main .playAudio .processLine span:nth-child(3) {
+  right: -45px;
+}
+.main .playAudio .processLine .currentLine {
+  width: 16px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #008b00;
+}
+.main .playContain {
+  height: 480px;
+  width: 100%;
+}

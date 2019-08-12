@@ -1,0 +1,273 @@
+<!--
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-08-09 17:13:26
+ * @LastEditTime: 2019-08-12 12:09:09
+ * @LastEditors: Please set LastEditors
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>网易云音乐</title>
+    <link rel="stylesheet" href="./css/iconfont.css">
+    <link rel="stylesheet" href="./css/iconfont1.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <script src="./js/template-web.js"></script>
+</head>
+
+<body>
+    <div class="login">
+        网页云音乐
+        <input type="text" placeholder="账号">
+        <input type="password" placeholder="密码">
+        <input type="text" placeholder="验证码">
+        <button disabled> <del>发送验证码</del> </button>
+        <span>验证码发送成功</span>
+    </div>
+    <div class="container iconfont clearfix">
+        <!-- 头部 -->
+        <div class="header">
+            <span id="userName">name</span>
+            <span id="userLevel">level</span>
+            <img id="userIcon" src="" alt="">
+            <div>
+                <input id="search" type="text">
+                <i ">&#xe633;</i>
+            </div>
+        </div>
+        <!-- 左边列表 -->
+        <div class=" list">
+                    <span class="title">喜欢的音乐</span>
+                    <ol class="mylist">
+                        <li musicId="123321">1234</li>
+                    </ol>
+            </div>
+            <!-- 右边主体 -->
+            <div class="main">
+                <!-- 中间歌单内容 -->
+                <div class="playContain">
+
+                </div>
+                <!-- 底部播放器 -->
+                <div class="playAudio">
+                    <div class="controlMune">
+                        <i id="preMusic" onselectstart="return false;">&#xe61d;</i>
+                        <i id="startMusic" class="icon-ziyuanldpi6" onselectstart="return false;"></i>
+                        <i id="nextMusic" onselectstart="return false;"> &#xe61e;</i>
+                    </div>
+                    <span class="musci"></span>
+                    <div class="processLine">
+                        <span id="startTime" onselectstart="return false;">0:00</span>
+                        <i id="currentPoint" onselectstart="return false;">&#xe617;</i>
+                        <span id="endTime" onselectstart="return false;">0:00</span>
+                        <div class="currentLine"></div>
+                    </div>
+                    <audio src=""></audio>
+                </div>
+            </div>
+        </div>
+</body>
+<!-- 左边列表音乐模板 -->
+<script id="myMusic" type="text/html">
+    {{each playlist.tracks}}
+    <li musicId="{{$value.id}}">{{$value.name}}</li>
+    {{/each}}
+</script>
+<script>
+
+    $(function () {
+        var au = document.getElementsByTagName('audio')[0];
+        var user = null;
+        var userID = 320611375;
+        var apiAdress='http://localhost';
+        console.log(au);
+        // 注册事件
+        //登录事件
+        $('.login').on('keydown', function (e) {
+            if (e.keyCode == 13) {
+                $.ajax({
+                    url: apiAdress+':3000/login/cellphone',
+                    type: 'post',
+                    dataType: 'json',
+                    data: {
+                        phone: $('.login').children().first().val(),
+                        password: $('.login').children().eq(1).val()
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if (data.code == 200) {
+                            //  alert('success');
+                            user = data;
+                            console.log(data);
+                            $('.login').fadeOut();
+                            reflash(getID());
+                            $('.container').fadeIn();
+                        }
+                    }
+                });
+
+            }
+        })
+
+        //发送验证码
+        $('.login button').on('click', function () {
+            $.ajax({
+                url: apiAdress+':3000/captcha/sent',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    phone: $('.login').children().first().val(),
+                },
+                success: function (data) {
+                    $('.login span').fadeIn(500).fadeOut(500)
+                }
+            });
+        })
+        //注册au总时长变化事件
+        au.addEventListener('durationchange', function () {
+            var min = Math.floor(au.duration / 60)
+            var sec = Math.ceil(au.duration % 60)
+            min = min < 10 ? '0' + min : min;
+            sec = sec < 10 ? '0' + sec : sec;
+            $('#endTime').text(min + ':' + sec);
+
+        })
+        //注册au当前时长变化事件
+        au.addEventListener('timeupdate', auprocess)
+        //注册播放器进度条拖拽事件
+        $('#currentPoint').on('mousedown', function () {
+            var target = au.currentTime;
+            $('#currentPoint').parent().parent().on('mousemove', function (e) {
+                target = e.pageX - $('#currentPoint').parent().offset().left - $('#currentPoint').width() / 2;
+                target = target < 0 ? 0 : target;
+                target = target > $('#currentPoint').parent().width() ? $('#currentPoint').parent().width() : target;
+                $('#currentPoint').css('left', target);
+                $('.currentLine').css('width', target + 16);
+                au.removeEventListener('timeupdate', auprocess);
+
+            }).on('mouseup', function () {
+                $('#currentPoint').parent().parent().off('mousemove');
+                //重新注册au进度条事件
+                au.currentTime = target / $('#currentPoint').parent().width() * au.duration||0;
+                au.addEventListener('timeupdate', auprocess)
+                $(this).off('mouseup');
+            })
+        })
+        //点击mylist音乐事件
+        $('.mylist').on('click', 'li', function () {
+            console.log($(this).text());
+            //播放音乐
+            $(this).addClass('active icon-ziyuanldpi6').siblings().removeClass('active icon-ziyuanldpi6');
+            $.ajax({
+                url: apiAdress+':3000/song/url',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    id: $(this).attr('musicid'),
+                },
+                success: function (data) {
+                    $('audio').attr('src', data.data[0].url);
+                    au.play();
+                }
+            });
+
+
+        })
+        //点击播放暂停
+        $('#startMusic').click(function () {
+            if (au != null) {
+                if (au.paused) {
+                    $(this).text('');
+                    $(this).addClass('icon-ziyuanldpi6')
+                    au.play();
+                } else {
+                    $(this).removeClass('icon-ziyuanldpi6')
+                    $(this).text('||');
+                    au.pause();
+                }
+            }
+            /*  if(au!=null){
+                 
+             } */
+        })
+
+        //刷新用户信息
+        function reflash(id) {
+            $.ajax({
+                url: apiAdress+':3000/user/detail',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    uid: id,
+                },
+                success: function (data) {
+                    //刷新头像,等级,名字
+                    $('#userIcon').attr('src', data.profile.avatarUrl);
+                    $('#userLevel').text('level:' + data.level);
+                    $('#userName').text(data.profile.nickname)
+                    getMyMusci(id);
+                }
+            });
+        }
+        //根据用户的id获得喜欢的歌单,并显示到页面上
+        function getMyMusci(id) {
+            var myid = null;
+            //获取用户的喜欢的歌单id
+            $.ajax({
+                url: apiAdress+':3000/user/playlist',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    uid: id,
+                },
+                success: function (data) {
+                    myid = data.playlist[0].id;
+                    $.ajax({
+                        url: apiAdress+':3000/playlist/detail',
+                        type: 'get',
+                        dataType: 'json',
+                        data: {
+                            id: myid,
+                        },
+                        success: function (data) {
+                            // console.log(data.playlist.tracks);
+                            $('.mylist').html(template('myMusic', data))
+                        }
+                    });
+
+                }
+            });
+
+        }
+        //获得用户的ID
+        function getID() {
+            return user.account.id;
+            // return 320611375;
+        }
+        //au进度条刷新方法
+        function auprocess() {
+            var min = Math.floor(au.currentTime / 60)
+            var sec = Math.ceil(au.currentTime % 60)
+            var cur = ($('#currentPoint').parent().width() - 16) * au.currentTime / au.duration;
+            min = min < 10 ? '0' + min : min;
+            sec = sec < 10 ? '0' + sec : sec;
+            $('#startTime').text(min + ':' + sec)
+            $('#currentPoint').css('left', cur);
+            $('.currentLine').width(cur + 16);
+
+        }
+        //刷新页面
+
+
+        reflash(getID());
+
+    })
+
+</script>
+
+</html>
